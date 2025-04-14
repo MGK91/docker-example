@@ -49,6 +49,59 @@ Boom! Everyone runs with JDK 11 — **no conflicts**.
 
 ---
 
+using unshare command to mimic docker run -it command line , unshare command runs in a isloated environment (Linux namespaces)
+
+mkdir ~/alpine-rootfs && cd ~/alpine-rootfs
+curl -LO https://dl-cdn.alpinelinux.org/alpine/v3.18/releases/x86_64/alpine-minirootfs-3.18.4-x86_64.tar.gz
+sudo tar -xzf alpine-minirootfs-3.18.4-x86_64.tar.gz
+
+The above mimics docker pull 
+
+now 
+sudo unshare --fork --pid --mount --uts --ipc --net --user --map-root-user chroot ./ /bin/sh
+
+Above command runs alpine in a container like environment
+
+docker run -it alpine #Simialr to this command
+
+
+Docker resources and Cgroups 
+
+Run a container ubuntu with --restart always argument making sure the container is always running even if the host machine is restarted 
+
+docker run -itd --restart always --name ubuntu-local ubuntu
+
+Now get the PID of the container 
+
+docker inspect --format '{{.State.Pid}}' ubuntu-local
+
+cat /proc/<pid>/cgroup
+
+
+[root@ip-x-x-x-x ~]# docker inspect --format '{{.State.Pid}}' ubuntu-local
+2746
+[root@ip-x-x-x-x ~]# cat /proc/2746/cgroup
+0::/system.slice/docker-96ad67517caf60b6a8625e9cf65ea8b73e0136b543ed8c4ea94b616b2aad3c1f.scope
+
+Now look at various config related to cpu , cpuset, memory , io etc under the path mentioned like below 
+
+[root@ip-x-x-x-x ~]# cat /sys/fs/cgroup/system.slice/docker-96ad67517caf60b6a8625e9cf65ea8b73e0136b543ed8c4ea94b616b2aad3c1f.scope/cpu.stat
+usage_usec 31849
+user_usec 31849
+system_usec 0
+core_sched.force_idle_usec 0
+nr_periods 0
+nr_throttled 0
+throttled_usec 0
+nr_bursts 0
+burst_usec 0
+---
+Linux containers 
+
+https://blog.purestorage.com/purely-educational/lxc-vs-lxd-linux-containers-demystified/
+
+---
+
 ### 5. Install Docker (Linux)
 
 ```bash
