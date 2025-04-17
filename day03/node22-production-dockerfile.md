@@ -104,7 +104,7 @@ CMD ["node", "index.js"]
 | `npm ci --only=production`       | Fast and consistent install, avoids dev deps |
 | Non-root user                    | Avoids running as root for security |
 | Healthcheck (optional)           | Docker monitors container health |
-| Clean, small image (~70MB)       | Compared to ~950MB unoptimized |
+| Clean, small image (~158MB)       | Compared to ~1.12GB unoptimized |
 
 ---
 
